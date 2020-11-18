@@ -1,0 +1,4 @@
+{
+  "mongoUri": "mongodb+srv://Hardik:mongo@cluster0.qfqz3.mongodb.net/test",
+  "jsonWebToken": "SecretKey"
+}
