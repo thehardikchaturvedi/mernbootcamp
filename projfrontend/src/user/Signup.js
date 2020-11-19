@@ -67,24 +67,24 @@ const Signup = () => {
   };
   const successMessage=()=>{
     return(
-      <SweetAlert
-        show={success}
-        title="Demo"
-        type='success'
-        text="Signup successfully"
-      />
-      // <Snackbars openStatus={success} type='success' msg='Sign Up Successfully' />
+      // <SweetAlert
+      //   show={success}
+      //   title="Demo"
+      //   type='success'
+      //   text="Signup successfully"
+      // />
+      <Snackbars openStatus={success} type='success' msg='Sign Up Successfully' />
     )
   }
   const errorMessage=()=>{
     return(
-      <SweetAlert
-        show={error}
-        title="Error"
-        type='error'
-        text={error}
-      />
-      // <Snackbars openStatus={error} type='error' msg={error} />
+      // <SweetAlert
+      //   show={error}
+      //   title="Error"
+      //   type='error'
+      //   text={error}
+      // />
+      <Snackbars openStatus={error} type='error' msg={error} />
     )
   }
   const willRedirect=()=>{
