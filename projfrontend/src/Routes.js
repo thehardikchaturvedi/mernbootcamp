@@ -5,9 +5,11 @@ import Signup from './user/Signup';
 import Signin from './user/Signin';
 import {PageTransition} from '@steveeeie/react-page-transition';
 import Navbar from './core/Navbar';
-
+import {Provider} from 'react-redux'
+import store from './redux/store'
 const Routes = () => {
   return (
+    <Provider store={store}>
     <BrowserRouter>
           <Route
         render={({ location }) => {
@@ -26,6 +28,7 @@ const Routes = () => {
       }}
     />
     </BrowserRouter>
+    </Provider>
   );
 };
 export default Routes;
