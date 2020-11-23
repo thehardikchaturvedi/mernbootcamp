@@ -21,6 +21,7 @@ import CountUp from 'react-countup';
 import VisibilitySensor from 'react-visibility-sensor';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
+import {connect} from 'react-redux';
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
