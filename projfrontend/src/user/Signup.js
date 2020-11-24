@@ -15,6 +15,7 @@ import { signup } from '../auth/helper/index';
 import MetaTags from 'react-meta-tags';
 import Snackbars from '../helper/Snackbars'
 import {Redirect} from 'react-router';
+import propTypes from 'prop-types'
 import SweetAlert from 'sweetalert2-react';
 import LazyLoad from 'react-lazy-load';
 import CountUp from 'react-countup';
@@ -22,6 +23,7 @@ import VisibilitySensor from 'react-visibility-sensor';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import {connect} from 'react-redux';
+import {setAlert} from '../redux/actions/alert'
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -53,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const Signup = () => {
+const Signup = (props) => {
   const [values, setvalues] = useState({
     name: '',
     email: '',
@@ -66,41 +68,41 @@ const Signup = () => {
   const handleChange = (name) => (event) => {
     setvalues({ ...values, error: false, [name]: event.target.value });
   };
-  const successMessage=()=>{
-    return(
+  // const successMessage=()=>{
+    // return(
       // <SweetAlert
       //   show={success}
       //   title="Demo"
       //   type='success'
       //   text="Signup successfully"
       // />
-      <Snackbars openStatus={success} type='success' msg='Sign Up Successfully' />
-    )
-  }
-  const errorMessage=()=>{
-    return(
+      // <Snackbars openStatus={success} type='success' msg='Sign Up Successfully' />
+    // )
+  // }
+  // const errorMessage=()=>{
+  //   return(
       // <SweetAlert
       //   show={error}
       //   title="Error"
       //   type='error'
       //   text={error}
       // />
-      <Snackbars openStatus={error} type='error' msg={error} />
-    )
-  }
+      // <Snackbars openStatus={error} type='error' msg={error} />
+  //   )
+  // }
   const willRedirect=()=>{
     
   }
   const onSubmit = (event) => {
     event.preventDefault();
     setvalues({ ...values, error: false });
-    console.log(email)
     signup({ name, email, password })
       .then((data) => {
         if (data.errors) {
           setvalues({ ...values, error: data.errors, success: false });
-        console.log('error')
+          props.setAlert(data.errors,'error')
         } else {
+          props.setAlert('Sign Up Successfully','success')
           setvalues({
             ...values,
             name: '',
@@ -188,8 +190,7 @@ const Signup = () => {
               <Grid item>
                 <Link to='/signin'>{'Have an account? Sign In'}</Link>
               </Grid>
-              {successMessage() }
-              {errorMessage() }
+              <Snackbars/>
             </Grid>
           </form>
         </div>
@@ -233,5 +234,8 @@ const Signup = () => {
     </Base>
   );
 };
+Signup.propTypes={
+  setAlert:propTypes.func.isRequired
+}
 
-export default Signup;
+export default connect(null,{setAlert})(Signup);
