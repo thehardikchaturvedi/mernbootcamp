@@ -12,6 +12,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import MetaTags from 'react-meta-tags'
+import Snackbars from '../helper/Snackbars'
+import {setAlert} from '../redux/actions/alert'
+import {login} from '../redux/actions/auth'
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -43,7 +46,42 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const Signin = () => {
+const Signin = (props) => {
+  const [values, setvalues] = useState({
+    email: '',
+    password: '',
+    error: '',
+    success: false,
+    willRedirect: false,
+  });
+  const { email, password, error, success } = values;
+  const handleChange = (name) => (event) => {
+    setvalues({ ...values, error: false, [name]: event.target.value });
+  };
+  const onSubmit = (event) => {
+    event.preventDefault();
+    setvalues({ ...values, error: false });
+    props.login({email, password })
+      .then((data) => {
+        if (data.errors) {
+          setvalues({ ...values, error: data.errors, success: false });
+          props.setAlert(data.errors,'error')
+        } else {
+          props.setAlert('Sign In Successfully','success')
+          setvalues({
+            ...values,
+            email: '',
+            password: '',
+            error: '',
+            success: true,
+            willRedirect: true,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   const classes = useStyles();
   return (
     <Base>
@@ -107,11 +145,16 @@ const Signin = () => {
           </form>
         </div>
         <Box mt={8}>
+        <Snackbars/>
           <Copyright />
         </Box>
       </Container>
     </Base>
   );
 };
+Signin.propTypes={
+  setAlert:propTypes.func.isRequired,
+  login:PropTypes.func.isRequired,
+}
 
-export default Signin;
+export default connect(null,{setAlert,login})(Signin);
