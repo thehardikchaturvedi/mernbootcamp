@@ -1,10 +1,10 @@
-import React from 'react';
+import React,{useState} from 'react';
 import Base from '../core/Base';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -14,7 +14,9 @@ import Container from '@material-ui/core/Container';
 import MetaTags from 'react-meta-tags'
 import Snackbars from '../helper/Snackbars'
 import {setAlert} from '../redux/actions/alert'
-import {login} from '../redux/actions/auth'
+import {loginUser} from '../redux/actions/auth'
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types'
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -46,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const Signin = (props) => {
+const Signin = ({loginUser,isAuthenticated}) => {
   const [values, setvalues] = useState({
     email: '',
     password: '',
@@ -61,28 +63,31 @@ const Signin = (props) => {
   const onSubmit = (event) => {
     event.preventDefault();
     setvalues({ ...values, error: false });
-    props.login({email, password })
-      .then((data) => {
-        if (data.errors) {
-          setvalues({ ...values, error: data.errors, success: false });
-          props.setAlert(data.errors,'error')
-        } else {
-          props.setAlert('Sign In Successfully','success')
-          setvalues({
-            ...values,
-            email: '',
-            password: '',
-            error: '',
-            success: true,
-            willRedirect: true,
-          });
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    loginUser({email, password })
+      // .then((data) => {
+      //   if (data.errors) {
+      //     setvalues({ ...values, error: data.errors, success: false });
+      //     props.setAlert(data.errors,'error')
+      //   } else {
+      //     props.setAlert('Sign In Successfully','success')
+      //     setvalues({
+      //       ...values,
+      //       email: '',
+      //       password: '',
+      //       error: '',
+      //       success: true,
+      //       willRedirect: true,
+      //     });
+      //   }
+      // })
+      // .catch((error) => {
+      //   console.log(error);
+      // });
   };
   const classes = useStyles();
+  if(isAuthenticated){
+    return <Redirect to='/dashboard'/>
+  }
   return (
     <Base>
        <MetaTags>
@@ -101,7 +106,7 @@ const Signin = (props) => {
             Sign In
           </Typography>
           <form className={classes.form} noValidate>
-            <TextField
+          <TextField
               variant='outlined'
               margin='normal'
               required
@@ -109,8 +114,9 @@ const Signin = (props) => {
               id='email'
               label='Email Address'
               name='email'
+              value={email}
               autoComplete='email'
-              autoFocus
+              onChange={handleChange('email')}
             />
             <TextField
               variant='outlined'
@@ -121,7 +127,9 @@ const Signin = (props) => {
               label='Password'
               type='password'
               id='password'
+              value={password}
               autoComplete='current-password'
+              onChange={handleChange('password')}
             />
             <Button
               type='submit'
@@ -129,9 +137,8 @@ const Signin = (props) => {
               variant='contained'
               color='primary'
               className={classes.submit}
-            >
-              Sign In
-            </Button>
+              onClick={onSubmit}
+            >Sign In </Button>
             <Grid container>
               <Grid item xs>
                 <Link href='#' variant='body2'>
@@ -147,14 +154,17 @@ const Signin = (props) => {
         <Box mt={8}>
         <Snackbars/>
           <Copyright />
-        </Box>
+        </Box>                                                                                                                    
       </Container>
     </Base>
   );
 };
 Signin.propTypes={
-  setAlert:propTypes.func.isRequired,
   login:PropTypes.func.isRequired,
-}
+  isAuthenticated:PropTypes.bool
+}                                                                                 
 
-export default connect(null,{setAlert,login})(Signin);
+const mapStateToProps=state=>({
+  isAuthenticated:state.auth.isAuthenticated                                                                                                                    
+})
+export default connect(mapStateToProps,{loginUser})(Signin);                                                     
